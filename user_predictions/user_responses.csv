@@ -1,0 +1,4 @@
+id,Gender,Age,Academic Pressure,Work Pressure,Sleep Duration,Have you ever had suicidal thoughts ?,Work/Study Hours,Financial Stress,Social Activity Level,Physical Activity Level,Screen Time per Day (hrs),Mood Swings Frequency,Panic Attacks Experience,Concentration Level,Intrusive Thoughts,Traumatic Experience History
+28000,Male,25,5,5,7.0,0,8.0,5,5,5,5.0,5.0,0,5.0,0,0
+28001,Female,25,5,5,7.0,0,8.0,5,5,5,5.0,5.0,0,5.0,0,0
+28002,Male,23,2,3,9.0,0,3.0,1,3,1,8.0,4.0,0,4.0,0,1

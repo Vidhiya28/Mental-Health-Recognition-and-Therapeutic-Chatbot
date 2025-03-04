@@ -1,4 +1,4 @@
-id,Gender,Age,Academic Pressure,Work Pressure,Sleep Duration,Have you ever had suicidal thoughts ?,Work/Study Hours,Financial Stress,Social Activity Level,Physical Activity Level,Screen Time per Day (hrs),Mood Swings Frequency,Panic Attacks Experience,Concentration Level,Intrusive Thoughts,Traumatic Experience History
-28000,Male,25,5,5,7.0,0,8.0,5,5,5,5.0,5.0,0,5.0,0,0
-28001,Female,25,5,5,7.0,0,8.0,5,5,5,5.0,5.0,0,5.0,0,0
-28002,Male,23,2,3,9.0,0,3.0,1,3,1,8.0,4.0,0,4.0,0,1
+email,Gender,Age,Academic Pressure,Work Pressure,Sleep Duration,Have you ever had suicidal thoughts ?,Work/Study Hours,Financial Stress,Social Activity Level,Physical Activity Level,Screen Time per Day (hrs),Mood Swings Frequency,Panic Attacks Experience,Concentration Level,Intrusive Thoughts,Traumatic Experience History,BDI_Score,GAD7_Score,PANSS_Score,MDQ_Score,YBOCS_Score,ASRS_Score,PCL5_Score,DES2_Score,Anxiety Disorders,Bipolar Disorder,Dissociative Disorders,ADHD,PTSD,Schizophrenia,OCD,Depression
+hi@123.com,Female,30,5,5,9.0,0,1.0,5,2,1,10.0,4,1,4,0,1,7.583987,8.193396,2.4039156,6.0556216,2.1926694,7.754314,3.577304,4.5685997,1.0,0.0,1.0,1.0,0.0,0.0,0.0,0.0
+jesov43039@numerobo.com,Male,34,3,3,2.0,0,2.0,2,2,2,6.0,4,0,4,0,0,,,,,,,,,,,,,,,,
+abc@gmail.com,Female,23,4,2,8.0,0,2.0,3,2,3,1.0,3,0,2,0,0,,,,,,,,,,,,,,,,

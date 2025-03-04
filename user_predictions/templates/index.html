@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mental Health Chatbot</title>
+    <script>
+        function sendMessage() {
+            var userMessage = document.getElementById("userInput").value;
+            document.getElementById("userInput").value = "";
+
+            fetch("/chat_api", {
+                method: "POST",
+                body: new URLSearchParams({"message": userMessage}),
+                headers: {"Content-Type": "application/x-www-form-urlencoded"}
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("chatBox").innerHTML += "<p><strong>You:</strong> " + userMessage + "</p>";
+                document.getElementById("chatBox").innerHTML += "<p><strong>Bot:</strong> " + data.response + "</p>";
+            });
+        }
+    </script>
+</head>
+<body>
+    <h2>Welcome, {{ session['email'] }}!</h2>
+    <a href="{{ url_for('logout') }}">Logout</a>
+    <div id="chatBox"></div>
+    <input type="text" id="userInput" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+</body>
+</html>

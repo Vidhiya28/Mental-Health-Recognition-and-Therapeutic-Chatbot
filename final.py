@@ -1,11 +1,30 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
-from chatbot import chat_with_gpt, analyze_sentiment
+import pandas as pd
+from chatbot import get_chatbot_response
 from user_data import get_user_data
 from database import register_user, verify_user
+import os
+import time
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")  # Explicitly set template path
 app.secret_key = "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"
-chat_history = []  # Stores conversation history
+
+
+FILE_PATH = "user_predictions/user_responses.csv"
+
+# Cache responses to reduce file I/O
+cached_responses = None
+last_load_time = 0
+
+def load_responses():
+    global cached_responses, last_load_time
+    if cached_responses is None or time.time() - last_load_time > 30:  # Reload every 30 sec
+        if os.path.exists(FILE_PATH):
+            cached_responses = pd.read_csv(FILE_PATH)
+        else:
+            cached_responses = pd.DataFrame()
+        last_load_time = time.time()
+    return cached_responses
 
 # Route: Home (Redirects to login if not authenticated)
 @app.route('/')
@@ -49,28 +68,31 @@ def chat():
     if "email" not in session:
         return redirect(url_for("login"))
 
-    user_data = get_user_data(session["email"])
-    return render_template("index.html", user_data=user_data)
+    df = load_responses()
+    user_data = df[df["email"] == session["email"]]
+    disorders = [col for col in user_data.columns[-8:] if user_data.iloc[0][col] == 1] if not user_data.empty else []
 
-# Route: Chatbot API
+    return render_template("index.html", user_data={"disorders": disorders})
+
 @app.route('/chat_api', methods=['POST'])
 def chat_api():
     if "email" not in session:
-        return jsonify({"error": "Unauthorized"})
+        return jsonify({"response": "Please log in first!"})
 
-    user_input = request.form['message']
-    sentiment = analyze_sentiment(user_input)
-    response = chat_with_gpt(user_input, chat_history)
+    email = session["email"]
+    user_message = request.form["message"]
+    
+    df = load_responses()
+    user_data = df[df["email"] == email]
 
-    if sentiment == "Negative":
-        response += " 🫂 It seems like you're feeling down. I'm here for you."
-    elif sentiment == "Positive":
-        response += " 😊 I'm glad to hear that!"
+    if user_data.empty:
+        user_disorders = []
+    else:
+        user_disorders = [col for col in user_data.columns[-8:] if user_data.iloc[0][col] == 1]
 
-    chat_history.append({"role": "user", "content": user_input})
-    chat_history.append({"role": "assistant", "content": response})
+    chatbot_response = get_chatbot_response(email, user_message, user_disorders)
 
-    return jsonify({"response": response})
+    return jsonify({"response": chatbot_response})
 
 # Route: Logout
 @app.route('/logout')

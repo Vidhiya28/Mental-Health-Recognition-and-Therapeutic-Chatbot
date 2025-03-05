@@ -78,7 +78,3 @@ def predict_user_disorder(email, user_responses_df, model):
     user_responses_df.to_csv("user_predictions/user_responses.csv", index=False)
 
     return final_predictions
-
-
-user_responses_df.to_csv("user_responses_updated.csv", index=False)
-print("Predictions generated for the latest user response and saved successfully!")

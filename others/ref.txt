@@ -1,0 +1,4 @@
+features to prioritize are:
+1. Data visualization for insights
+2. journal entry and using them for the chatbot response generation
+3. connection with local therapist based on their expertise

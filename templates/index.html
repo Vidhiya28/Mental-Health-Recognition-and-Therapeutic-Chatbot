@@ -23,6 +23,17 @@
 <body>
     <h2>Welcome, {{ session['email'] }}!</h2>
     <a href="{{ url_for('logout') }}">Logout</a>
+
+    <h3>Your Mental Health Insights</h3>
+    <div>
+        {% if disorders %}
+            <p><strong>Predicted Disorders:</strong> {{ disorders }}</p>
+        {% else %}
+            <p><strong>No disorders detected.</strong></p>
+        {% endif %}
+    </div>
+
+    <h3>Chat with the Mental Health Chatbot</h3>
     <div id="chatBox"></div>
     <input type="text" id="userInput" placeholder="Type your message...">
     <button onclick="sendMessage()">Send</button>

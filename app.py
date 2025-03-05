@@ -1,13 +1,15 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 import pandas as pd
 from keras.models import load_model
-from model import predict_user_disorder
+#from model import predict_user_disorder
+from user_predictions.model import predict_user_disorder
+
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from database import register_user, verify_user
 
-app = Flask(__name__, template_folder="../templates")
+app = Flask(__name__, template_folder="templates")
 app.secret_key = "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"  # Required for session management
 
 SAVE_FOLDER = "user_predictions"

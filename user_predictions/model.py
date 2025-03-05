@@ -5,9 +5,16 @@ from tensorflow.keras import layers
 from sklearn.preprocessing import MinMaxScaler
 
 
-train_df = pd.read_csv("user_predictions\\Dataset_after_prediction.csv")
+#import os
+#train_df = pd.read_csv(os.path.join(os.getcwd(), "user_predictions", "Dataset_after_prediction.csv"))
 
-user_responses_df = pd.read_csv("user_predictions\\user_responses_new.csv")
+
+
+
+train_df = pd.read_csv("user_predictions/Dataset_after_prediction.csv")
+
+user_responses_df = pd.read_csv("user_predictions/user_responses_new.csv")
+
 
 feature_columns = ["Academic Pressure", "Work Pressure", "Sleep Duration",
                    "Have you ever had suicidal thoughts ?", "Work/Study Hours",

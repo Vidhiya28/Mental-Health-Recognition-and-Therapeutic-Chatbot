@@ -8,76 +8,81 @@
 <body>
     <h2>Mental Health Assessment Questionnaire</h2>
 
+    <!-- Show Logged-in Email -->
+    <p><strong>Logged in as:</strong> {{ email }}</p>
+
     <form action="/submit" method="POST">
-        <label>Your Unique ID: {{ user_id }}</label>
-        <input type="hidden" name="id" value="{{ user_id }}"><br><br>
 
         <label>Gender:</label>
         <select name="Gender">
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
+            <option value="Male" {% if user_data.get('Gender') == 'Male' %}selected{% endif %}>Male</option>
+            <option value="Female" {% if user_data.get('Gender') == 'Female' %}selected{% endif %}>Female</option>
+            <option value="Other" {% if user_data.get('Gender') == 'Other' %}selected{% endif %}>Other</option>
         </select><br><br>
 
         <label>Age:</label>
-        <input type="number" name="Age" min="10" max="100" required><br><br>
+        <input type="number" name="Age" min="10" max="100" value="{{ user_data.get('Age', '') }}" required><br><br>
 
         <label>Academic Pressure (0-5):</label>
-        <input type="number" name="Academic Pressure" min="0" max="5" required><br><br>
+        <input type="number" name="Academic Pressure" min="0" max="5" value="{{ user_data.get('Academic Pressure', '') }}" required><br><br>
 
         <label>Work Pressure (0-5):</label>
-        <input type="number" name="Work Pressure" min="0" max="5" required><br><br>
+        <input type="number" name="Work Pressure" min="0" max="5" value="{{ user_data.get('Work Pressure', '') }}" required><br><br>
 
         <label>Sleep Duration (hours):</label>
-        <input type="number" name="Sleep Duration" min="0" max="24" step="0.1" required><br><br>
+        <input type="number" name="Sleep Duration" min="0" max="24" step="0.1" value="{{ user_data.get('Sleep Duration', '') }}" required><br><br>
 
         <label>Have you ever had suicidal thoughts?</label>
         <select name="Have you ever had suicidal thoughts ?">
-            <option value="No">No</option>
-            <option value="Yes">Yes</option>
+            <option value="No" {% if user_data.get('Have you ever had suicidal thoughts ?') == 0 %}selected{% endif %}>No</option>
+            <option value="Yes" {% if user_data.get('Have you ever had suicidal thoughts ?') == 1 %}selected{% endif %}>Yes</option>
         </select><br><br>
 
         <label>Work/Study Hours per Day:</label>
-        <input type="number" name="Work/Study Hours" min="0" max="24" step="0.1" required><br><br>
+        <input type="number" name="Work/Study Hours" min="0" max="24" step="0.1" value="{{ user_data.get('Work/Study Hours', '') }}" required><br><br>
 
         <label>Financial Stress Level (0-5):</label>
-        <input type="number" name="Financial Stress" min="0" max="5" required><br><br>
+        <input type="number" name="Financial Stress" min="0" max="5" value="{{ user_data.get('Financial Stress', '') }}" required><br><br>
 
         <label>Social Activity Level (0-5):</label>
-        <input type="number" name="Social Activity Level" min="0" max="5" required><br><br>
+        <input type="number" name="Social Activity Level" min="0" max="5" value="{{ user_data.get('Social Activity Level', '') }}" required><br><br>
 
         <label>Physical Activity Level (0-5):</label>
-        <input type="number" name="Physical Activity Level" min="0" max="5" required><br><br>
+        <input type="number" name="Physical Activity Level" min="0" max="5" value="{{ user_data.get('Physical Activity Level', '') }}" required><br><br>
 
         <label>Screen Time per Day (hrs):</label>
-        <input type="number" name="Screen Time per Day (hrs)" min="0" max="24" step="0.1" required><br><br>
+        <input type="number" name="Screen Time per Day (hrs)" min="0" max="24" step="0.1" value="{{ user_data.get('Screen Time per Day (hrs)', '') }}" required><br><br>
 
-        <!-- Missing Fields Added -->
         <label>Mood Swings Frequency (0-5):</label>
-        <input type="number" name="Mood Swings Frequency" min="0" max="5" required><br><br>
+        <input type="number" name="Mood Swings Frequency" min="0" max="5" value="{{ user_data.get('Mood Swings Frequency', '') }}" required><br><br>
 
         <label>Panic Attacks Experience:</label>
         <select name="Panic Attacks Experience">
-            <option value="No">No</option>
-            <option value="Yes">Yes</option>
+            <option value="No" {% if user_data.get('Panic Attacks Experience') == 0 %}selected{% endif %}>No</option>
+            <option value="Yes" {% if user_data.get('Panic Attacks Experience') == 1 %}selected{% endif %}>Yes</option>
         </select><br><br>
 
         <label>Concentration Level (0-5):</label>
-        <input type="number" name="Concentration Level" min="0" max="5" required><br><br>
+        <input type="number" name="Concentration Level" min="0" max="5" value="{{ user_data.get('Concentration Level', '') }}" required><br><br>
 
         <label>Intrusive Thoughts:</label>
         <select name="Intrusive Thoughts">
-            <option value="No">No</option>
-            <option value="Yes">Yes</option>
+            <option value="No" {% if user_data.get('Intrusive Thoughts') == 0 %}selected{% endif %}>No</option>
+            <option value="Yes" {% if user_data.get('Intrusive Thoughts') == 1 %}selected{% endif %}>Yes</option>
         </select><br><br>
 
         <label>Traumatic Experience History:</label>
         <select name="Traumatic Experience History">
-            <option value="No">No</option>
-            <option value="Yes">Yes</option>
+            <option value="No" {% if user_data.get('Traumatic Experience History') == 0 %}selected{% endif %}>No</option>
+            <option value="Yes" {% if user_data.get('Traumatic Experience History') == 1 %}selected{% endif %}>Yes</option>
         </select><br><br>
 
         <input type="submit" value="Submit Response">
     </form>
+
+    <br>
+    <a href="{{ url_for('logout') }}">
+        <button>Logout</button>
+    </a>
 </body>
 </html>

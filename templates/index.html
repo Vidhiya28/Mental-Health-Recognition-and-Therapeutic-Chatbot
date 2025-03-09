@@ -1,41 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mental Health Chatbot</title>
-    <script>
-        function sendMessage() {
-            var userMessage = document.getElementById("userInput").value;
-            document.getElementById("userInput").value = "";
-
-            fetch("/chat_api", {
-                method: "POST",
-                body: new URLSearchParams({"message": userMessage}),
-                headers: {"Content-Type": "application/x-www-form-urlencoded"}
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("chatBox").innerHTML += "<p><strong>You:</strong> " + userMessage + "</p>";
-                document.getElementById("chatBox").innerHTML += "<p><strong>Bot:</strong> " + data.response + "</p>";
-            });
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
         }
-    </script>
+        .chat-container {
+            width: 50%;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        .messages {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: white;
+            text-align: left;
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+        }
+        button {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .logout-button, .update-form-button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .update-form-button {
+            background-color: blue;
+        }
+    </style>
 </head>
 <body>
-    <h2>Welcome, {{ session['email'] }}!</h2>
-    <a href="{{ url_for('logout') }}">Logout</a>
 
-    <h3>Your Mental Health Insights</h3>
-    <div>
-        {% if disorders %}
-            <p><strong>Predicted Disorders:</strong> {{ disorders }}</p>
-        {% else %}
-            <p><strong>No disorders detected.</strong></p>
-        {% endif %}
+<div class="chat-container">
+    <div class="header">
+        <h2>Mental Health Chatbot</h2>
+    </div>
+    
+    <div class="messages" id="chatbox">
+        <p><b>Chatbot:</b> Hello! How are you feeling today?</p>
     </div>
 
-    <h3>Chat with the Mental Health Chatbot</h3>
-    <div id="chatBox"></div>
     <input type="text" id="userInput" placeholder="Type your message...">
     <button onclick="sendMessage()">Send</button>
+
+    <div class="button-container">
+        <a href="{{ url_for('form') }}" class="update-form-button">Update Form Responses</a>
+        <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+    </div>
+</div>
+
+<script>
+    function sendMessage() {
+        let userInput = document.getElementById("userInput").value;
+        if (userInput.trim() === "") return;
+
+        let chatbox = document.getElementById("chatbox");
+        chatbox.innerHTML += `<p><b>You:</b> ${userInput}</p>`;
+
+        fetch("/chat_api", {
+            method: "POST",
+            body: new URLSearchParams({ message: userInput }),
+            headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        })
+        .then(response => response.json())
+        .then(data => {
+            chatbox.innerHTML += `<p><b>Chatbot:</b> ${data.response}</p>`;
+            document.getElementById("userInput").value = "";
+            chatbox.scrollTop = chatbox.scrollHeight;
+        })
+        .catch(error => console.error("Error:", error));
+    }
+</script>
+
 </body>
 </html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Results</title>
+</head>
+<body>
+    <h2>Your Mental Health Assessment Results</h2>
+
+    {% if disorders %}
+        <p>Based on your responses, the following mental health conditions were identified:</p>
+        <ul>
+            {% for disorder, description in disorders.items() %}
+                <li>
+                    <strong>{{ disorder }}</strong>: {{ description }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No specific mental health disorder was detected based on your responses.</p>
+    {% endif %}
+
+    <br>
+    <a href="{{ url_for('chat') }}">
+        <button>Proceed to Chatbot</button>
+    </a>
+</body>
+</html>

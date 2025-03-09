@@ -8,3 +8,6 @@ curl https://api.openai.com/v1/chat/completions \
       {"role": "user", "content": "write a haiku about ai"}
     ]
   }'
+
+#hugging face
+MyChatbotAPI - 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

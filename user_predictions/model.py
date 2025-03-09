@@ -7,7 +7,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 train_df = pd.read_csv("user_predictions\\Dataset_after_prediction.csv")
 
-user_responses_df = pd.read_csv("user_predictions\\user_responses_new.csv")
+user_responses_df = pd.read_csv("user_predictions\\user_responses.csv")
 
 feature_columns = ["Academic Pressure", "Work Pressure", "Sleep Duration",
                    "Have you ever had suicidal thoughts ?", "Work/Study Hours",
@@ -54,27 +54,73 @@ model.fit(X_train, y_train, epochs=5, batch_size=32, verbose=1)
 model.save("mental_health_model.h5")
 
 
-#disorder prediction for the logged in user
+scaler = MinMaxScaler()
+scaler.fit(X_train)
+
+# Disorder Prediction Function
 def predict_user_disorder(email, user_responses_df, model):
-    user_row = user_responses_df[user_responses_df["email"] == email]
+    """Predict disorder scores for a specific logged-in user based on email."""
+
+    # Fetch user row
+    user_row = user_responses_df[user_responses_df["email"] == email].copy()
+    
     if user_row.empty:
         return "User not found."
 
+    # Convert categorical responses (Yes/No) to binary (1/0)
+    categorical_columns = [
+        "Have you ever had suicidal thoughts ?", "Panic Attacks Experience",
+        "Intrusive Thoughts", "Traumatic Experience History"
+    ]
+    
+    for col in categorical_columns:
+        if col in user_row.columns:
+            user_row[col] = user_row[col].map({"Yes": 1, "No": 0})
+
+    # Extract features & scale input
     user_features = user_row[feature_columns].values.reshape(1, -1)
+    user_features = scaler.transform(user_features)  # Normalize input
 
-    # Normalize the features using the previously fitted scaler
-    user_features = scaler.transform(user_features)
-
-    # Predict disorder scores using the trained model
+    # Predict disorder scores using trained model
     predicted_scores = model.predict(user_features).flatten()
-    score_predictions = predicted_scores[:8]  # First 8 are scores
-
-    # Convert disorders (last 8 values) to binary (0 or 1)
+    
+    # Extract disorder probabilities (last 8 values)
+    score_predictions = predicted_scores[:8]  # First 8 values are scores
     disorder_predictions = [1 if score >= 0.5 else 0 for score in predicted_scores[8:]]
-    final_predictions = list(score_predictions) + disorder_predictions
 
-    for i, column in enumerate(target_columns):
-        user_responses_df.at[user_row.index[0], column] = final_predictions[i]
+    for i, column in enumerate(target_columns[:8]):  # Update score columns
+        user_responses_df.at[user_row.index[0], column] = score_predictions[i]
+    for i, column in enumerate(target_columns[8:]):  # Update disorder columns
+        user_responses_df.at[user_row.index[0], column] = disorder_predictions[i]
+
+    # Save the updated dataset
     user_responses_df.to_csv("user_predictions/user_responses.csv", index=False)
 
-    return final_predictions
+    return list(score_predictions) + disorder_predictions
+    user_row = user_responses_df[user_responses_df["email"] == email]
+    
+    if user_row.empty:
+        return "User not found."
+    
+    categorical_columns = [
+        "Have you ever had suicidal thoughts ?", "Panic Attacks Experience",
+        "Intrusive Thoughts", "Traumatic Experience History"
+    ]
+    
+    for col in categorical_columns:
+        if col in user_row.columns:
+            user_row[col] = user_row[col].map({"Yes": 1, "No": 0})
+
+    user_features = user_row[feature_columns].values.reshape(1, -1)
+    user_features = scaler.transform(user_features)
+
+    predicted_scores = model.predict(user_features).flatten()
+    
+    score_predictions = predicted_scores[:8]  
+    disorder_predictions = [1 if score >= 0.5 else 0 for score in predicted_scores[8:]]
+
+    for i, column in enumerate(target_columns):
+        user_responses_df.at[user_row.index[0], column] = list(score_predictions) + disorder_predictions
+    user_responses_df.to_csv("user_predictions/user_responses.csv", index=False)
+
+    return list(score_predictions) + disorder_predictions

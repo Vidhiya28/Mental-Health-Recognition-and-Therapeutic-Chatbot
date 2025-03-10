@@ -19,7 +19,7 @@ MODEL_PATH = os.path.join(BASE_DIR, "../user_predictions/mental_health_model.h5"
 # Load ML model
 SAVE_FOLDER = "user_predictions"
 USER_RESPONSES_PATH = os.path.join(SAVE_FOLDER, "user_responses.csv")
-MODEL_PATH = load_model(os.path.join(SAVE_FOLDER, "mental_health_model.h5"))
+MODEL_PATH = load_model("mental_health_model.h5")
 
 # Caching responses to reduce file I/O
 cached_responses = None

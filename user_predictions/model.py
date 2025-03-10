@@ -97,30 +97,3 @@ def predict_user_disorder(email, user_responses_df, model):
     user_responses_df.to_csv("user_predictions/user_responses.csv", index=False)
 
     return list(score_predictions) + disorder_predictions
-    user_row = user_responses_df[user_responses_df["email"] == email]
-    
-    if user_row.empty:
-        return "User not found."
-    
-    categorical_columns = [
-        "Have you ever had suicidal thoughts ?", "Panic Attacks Experience",
-        "Intrusive Thoughts", "Traumatic Experience History"
-    ]
-    
-    for col in categorical_columns:
-        if col in user_row.columns:
-            user_row[col] = user_row[col].map({"Yes": 1, "No": 0})
-
-    user_features = user_row[feature_columns].values.reshape(1, -1)
-    user_features = scaler.transform(user_features)
-
-    predicted_scores = model.predict(user_features).flatten()
-    
-    score_predictions = predicted_scores[:8]  
-    disorder_predictions = [1 if score >= 0.5 else 0 for score in predicted_scores[8:]]
-
-    for i, column in enumerate(target_columns):
-        user_responses_df.at[user_row.index[0], column] = list(score_predictions) + disorder_predictions
-    user_responses_df.to_csv("user_predictions/user_responses.csv", index=False)
-
-    return list(score_predictions) + disorder_predictions

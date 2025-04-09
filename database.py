@@ -12,7 +12,6 @@ def create_user_db():
         df.to_csv(USER_DB, index=False)
 
 def register_user(email, password):
-    """Registers a new user with hashed password."""
     df = pd.read_csv(USER_DB)
 
     if email in df["email"].values:

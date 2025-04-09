@@ -4,19 +4,16 @@ import os
 import time
 from keras.models import load_model
 
-from chatbot import get_chatbot_response
 from database import register_user, verify_user
 from user_predictions.model import predict_user_disorder  
+from chatbot import get_chatbot_response
+
+JOURNAL_DIR = "user_predictions/journals"
+os.makedirs(JOURNAL_DIR, exist_ok=True)
 
 app = Flask(__name__, template_folder="templates") 
 app.secret_key = "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"
 
-'''# Update file paths to match new location inside `chatbot/`
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))  # Get `chatbot/` folder path
-USER_RESPONSES_PATH = os.path.join(BASE_DIR, "../user_predictions/user_responses.csv")
-MODEL_PATH = os.path.join(BASE_DIR, "../user_predictions/mental_health_model.h5")
-'''
-# Load ML model
 SAVE_FOLDER = "user_predictions"
 USER_RESPONSES_PATH = os.path.join(SAVE_FOLDER, "user_responses.csv")
 MODEL_PATH = load_model("mental_health_model.h5")
@@ -45,9 +42,7 @@ def binary_convert(value):
 # Home route (redirects based on login status)
 @app.route('/')
 def home():
-    if "email" in session:
-        return redirect(url_for("chat"))
-    return redirect(url_for("login"))
+    return render_template("home.html")
 
 # Login Page
 @app.route('/login', methods=['GET', 'POST'])
@@ -208,6 +203,28 @@ def predictions():
 
     return render_template("prediction_result.html", disorders=disorders_with_desc)
 
+@app.route('/journal', methods=['GET', 'POST'])
+def journal():
+    if "email" not in session:
+        return redirect(url_for("login"))
+    
+    email = session["email"]
+    journal_path = os.path.join(JOURNAL_DIR, f"{email}.txt")
+
+    if request.method == "POST":
+        entry = request.form.get("entry")
+        with open(journal_path, "a", encoding="utf-8") as f:
+            f.write(f"\n--- Entry ({time.strftime('%Y-%m-%d %H:%M:%S')}) ---\n{entry}\n")
+        return redirect(url_for("chat"))
+
+    # Read existing entries
+    entries = ""
+    if os.path.exists(journal_path):
+        with open(journal_path, "r", encoding="utf-8") as f:
+            entries = f.read()
+
+    return render_template("journal.html", entries=entries)
+
 # Chatbot Page
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
@@ -220,6 +237,8 @@ def chat():
 
     return render_template("index.html", user_data={"disorders": disorders})
 
+from huggingface_api import query_model
+
 @app.route('/chat_api', methods=['POST'])
 def chat_api():
     if "email" not in session:
@@ -228,15 +247,9 @@ def chat_api():
     email = session["email"]
     user_message = request.form.get("message")
 
-    df = load_responses()
-    user_data = df[df["email"] == email]
-    user_disorders = [col for col in user_data.columns[-8:] if user_data.iloc[0][col] == 1] if not user_data.empty else []
+    response = get_chatbot_response(email, user_message)
 
-    print(f"Received message: {user_message}") 
-    
-    chatbot_response = get_chatbot_response(email, user_message, user_disorders)
-
-    return jsonify({"response": chatbot_response})
+    return jsonify({"response": response})
 
 if __name__ == '__main__':
     app.run(debug=True)

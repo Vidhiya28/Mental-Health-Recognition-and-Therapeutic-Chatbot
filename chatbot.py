@@ -1,74 +1,54 @@
-import openai
 import os
 import json
+from huggingface_api import query_model
 
+SYSTEM_PROMPT = """
+You are an emotionally intelligent mental health assistant.
 
-OPENAI_API_KEY = "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"
-client = openai.OpenAI(api_key=OPENAI_API_KEY)
+- Keep responses short (10–20 words) unless the user asks for insights.
+- Be empathetic, caring, and attentive. Use past messages to show understanding.
+- Listen deeply when users share emotional struggles. Don’t judge or rush to fix.
+- Offer gentle reflection, motivational support (quotes, CBT, mindfulness), and practical coping strategies.
+- Never diagnose, but help users notice emotional patterns and behaviors.
+- Ask thoughtful, open-ended questions to guide self-awareness.
+- Gently challenge negative self-beliefs and offer healthier perspectives.
+- Celebrate wins and encourage self-kindness.
+- Speak confidently. Only suggest professional help in extreme cases.
 
-# Load chat history
-CHAT_HISTORY_FILE = "chat_history.json"
+Your goal: Help users feel heard, supported, and empowered. Always be here for them.
+"""
 
-# Ensure the chat history file exists
-def load_chat_history():
-    if os.path.exists(CHAT_HISTORY_FILE):
-        with open(CHAT_HISTORY_FILE, "r") as f:
-            return json.load(f)
-    return {}
+CONVO_DIR = "user_predictions/conversations"
 
-def save_chat_history(history):
-    with open(CHAT_HISTORY_FILE, "w") as f:
-        json.dump(history, f, indent=4)
+os.makedirs(CONVO_DIR, exist_ok=True)
 
-def get_chatbot_response(user_email, user_message, user_disorders):
-    '''
-    Generates a personalized response using ChatGPT-4.0 Mini.
-    - Considers user's previous chat history.
-    - Uses mental disorder predictions for relevant responses.
-    - Asks meaningful follow-ups.
-    '''
+def load_conversation(email):
+    path = os.path.join(CONVO_DIR, f"{email}_chat.json")
+    if os.path.exists(path):
+        with open(path, "r") as file:
+            return json.load(file)
+    return []
 
-    chat_history = load_chat_history()
-    user_conversation = chat_history.get(user_email, [])
+def save_conversation(email, conversation):
+    path = os.path.join(CONVO_DIR, f"{email}_chat.json")
+    with open(path, "w") as file:
+        json.dump(conversation, file)
 
-    disorder_info = (
-        f"This user has been identified with: {', '.join(user_disorders)}."
-        if user_disorders else 
-        "This user has no identified mental health disorders."
-    )
+def get_chatbot_response(email, user_message, user_disorders=[]):
+    conversation = load_conversation(email)
 
-    system_message = {
-        "role": "system",
-        "content": (
-            "You are a mental health chatbot providing supportive, insightful, and personalized responses. "
-            f"{disorder_info} "
-            "Provide meaningful guidance, ask relevant follow-up questions, and offer mental health tips."
-        )
-    }
+    conversation.append({"role": "user", "content": user_message})
 
-    # Add chat history (only last 5 messages for context)
-    messages = [system_message]
-    for entry in user_conversation[-5:]:
-        messages.append({"role": "user", "content": entry["user"]})
-        messages.append({"role": "assistant", "content": entry["bot"]})
+    prompt = f"[INST] {SYSTEM_PROMPT.strip()}\n\n"
+    for msg in conversation[-5:]: 
+        role = "User" if msg["role"] == "user" else "Assistant"
+        prompt += f"{role}: {msg['content']}\n"
+    prompt += "Assistant: [/INST]"
 
-    # Add the latest user message
-    messages.append({"role": "user", "content": user_message})
+    response = query_model(prompt)
 
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=messages,
-            temperature=0.7
-        )
-        bot_response = response["choices"][0]["message"]["content"]
+    conversation.append({"role": "assistant", "content": response})
+    save_conversation(email, conversation)
 
-        user_conversation.append({"user": user_message, "bot": bot_response})
-        chat_history[user_email] = user_conversation[-10:]
-        save_chat_history(chat_history)
+    return response
 
-        return bot_response
-    
-    except Exception as e:
-        print(f"Error in OpenAI API: {e}")  # Debugging print statement
-        return "I'm having trouble responding right now. Try again later."

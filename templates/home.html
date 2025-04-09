@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome | Mental Health Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .fade-in {
+            animation: fadeIn 1.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="full-height-bg">
+    <div class="container">
+        <div class="card center fade-in">
+            <h1>Welcome to Your Mental Health Assistant</h1>
+            <p class="text-muted">A safe space to talk, reflect, and grow ✨</p>
+            <div class="link-group">
+                <a href="{{ url_for('chat') }}" class="btn">Chat with Assistant</a>
+                <a href="{{ url_for('journal') }}" class="btn">My Journal</a>
+                <a href="{{ url_for('form') }}" class="btn">Assessment Form</a>
+                <a href="{{ url_for('predictions') }}" class="btn">View Prediction</a>
+                <a href="{{ url_for('login') }}" class="btn">Login</a>
+                <a href="{{ url_for('register') }}" class="btn">Register</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

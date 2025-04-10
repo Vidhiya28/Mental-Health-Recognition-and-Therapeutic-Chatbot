@@ -5,7 +5,7 @@
   <h2 class="text-center mb-4">💬 Mental Health Chatbot</h2>
 
   <div class="card shadow-sm p-4">
-    <div class="messages mb-3" id="chatbox" style="height: 300px; overflow-y: auto; padding: 10px; background-color: #fff;">
+    <div class="messages mb-3" id="chatbox">
       <div class="chatbot-message"><b>Chatbot:</b> Hello! How are you feeling today?</div>
     </div>
 
@@ -32,7 +32,10 @@
     if (userInput.trim() === "") return;
 
     let chatbox = document.getElementById("chatbox");
-    chatbox.innerHTML += `<div class="user-message"><b>You:</b> ${userInput}</div>`;
+
+    chatbox.innerHTML += `
+      <div class="user-message"><b>You:</b> ${userInput}</div>
+    `;
 
     fetch("/chat_api", {
       method: "POST",
@@ -41,11 +44,14 @@
     })
     .then(response => response.json())
     .then(data => {
-      chatbox.innerHTML += `<div class="chatbot-message"><b>Chatbot:</b> ${data.response}</div>`;
+      chatbox.innerHTML += `
+        <div class="chatbot-message"><b>Chatbot:</b> ${data.response}</div>
+      `;
       document.getElementById("userInput").value = "";
       chatbox.scrollTop = chatbox.scrollHeight;
     });
   }
 </script>
 {% endblock %}
+
 

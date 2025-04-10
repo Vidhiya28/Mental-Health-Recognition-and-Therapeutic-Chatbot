@@ -1,89 +1,77 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mental Health Assessment</title>
-</head>
-<body>
-    <h2>Mental Health Assessment Questionnaire</h2>
+{% extends "base.html" %}
+{% block title %}Assessment Form{% endblock %}
+{% block content %}
+<div class="form-container">
+  <h2>Mental Health Assessment Questionnaire</h2>
+  <p><strong>Logged in as:</strong> {{ email }}</p>
 
-    <!-- Show Logged-in Email -->
-    <p><strong>Logged in as:</strong> {{ email }}</p>
+  <form action="/submit" method="POST">
+    <label>Gender:</label>
+    <select name="Gender" required>
+      <option value="Male" {% if user_data.get('Gender') == 'Male' %}selected{% endif %}>Male</option>
+      <option value="Female" {% if user_data.get('Gender') == 'Female' %}selected{% endif %}>Female</option>
+    </select>
 
-    <form action="/submit" method="POST">
+    <label>Age:</label>
+    <input type="text" name="Age" value="{{ user_data.get('Age', '') }}" required>
 
-        <label>Gender:</label>
-        <select name="Gender">
-            <option value="Male" {% if user_data.get('Gender') == 'Male' %}selected{% endif %}>Male</option>
-            <option value="Female" {% if user_data.get('Gender') == 'Female' %}selected{% endif %}>Female</option>
-            <option value="Other" {% if user_data.get('Gender') == 'Other' %}selected{% endif %}>Other</option>
-        </select><br><br>
+    <label>Academic Pressure (1-5):</label>
+    <input type="text" name="Academic Pressure" value="{{ user_data.get('Academic Pressure', '') }}" required>
 
-        <label>Age:</label>
-        <input type="number" name="Age" min="10" max="100" value="{{ user_data.get('Age', '') }}" required><br><br>
+    <label>Work Pressure (1-5):</label>
+    <input type="text" name="Work Pressure" value="{{ user_data.get('Work Pressure', '') }}" required>
 
-        <label>Academic Pressure (0-5):</label>
-        <input type="number" name="Academic Pressure" min="0" max="5" value="{{ user_data.get('Academic Pressure', '') }}" required><br><br>
+    <label>Sleep Duration (in hours):</label>
+    <input type="text" name="Sleep Duration" value="{{ user_data.get('Sleep Duration', '') }}" required>
 
-        <label>Work Pressure (0-5):</label>
-        <input type="number" name="Work Pressure" min="0" max="5" value="{{ user_data.get('Work Pressure', '') }}" required><br><br>
+    <label>Have you ever had suicidal thoughts?</label>
+    <select name="Have you ever had suicidal thoughts ?" required>
+      <option value="Yes" {% if user_data.get('Have you ever had suicidal thoughts ?') == 'Yes' %}selected{% endif %}>Yes</option>
+      <option value="No" {% if user_data.get('Have you ever had suicidal thoughts ?') == 'No' %}selected{% endif %}>No</option>
+    </select>
 
-        <label>Sleep Duration (hours):</label>
-        <input type="number" name="Sleep Duration" min="0" max="24" step="0.1" value="{{ user_data.get('Sleep Duration', '') }}" required><br><br>
+    <label>Work/Study Hours per Day:</label>
+    <input type="text" name="Work/Study Hours" value="{{ user_data.get('Work/Study Hours', '') }}" required>
 
-        <label>Have you ever had suicidal thoughts?</label>
-        <select name="Have you ever had suicidal thoughts ?">
-            <option value="No" {% if user_data.get('Have you ever had suicidal thoughts ?') == 0 %}selected{% endif %}>No</option>
-            <option value="Yes" {% if user_data.get('Have you ever had suicidal thoughts ?') == 1 %}selected{% endif %}>Yes</option>
-        </select><br><br>
+    <label>Financial Stress (1-5):</label>
+    <input type="text" name="Financial Stress" value="{{ user_data.get('Financial Stress', '') }}" required>
 
-        <label>Work/Study Hours per Day:</label>
-        <input type="number" name="Work/Study Hours" min="0" max="24" step="0.1" value="{{ user_data.get('Work/Study Hours', '') }}" required><br><br>
+    <label>Social Activity Level (1-5):</label>
+    <input type="text" name="Social Activity Level" value="{{ user_data.get('Social Activity Level', '') }}" required>
 
-        <label>Financial Stress Level (0-5):</label>
-        <input type="number" name="Financial Stress" min="0" max="5" value="{{ user_data.get('Financial Stress', '') }}" required><br><br>
+    <label>Physical Activity Level (1-5):</label>
+    <input type="text" name="Physical Activity Level" value="{{ user_data.get('Physical Activity Level', '') }}" required>
 
-        <label>Social Activity Level (0-5):</label>
-        <input type="number" name="Social Activity Level" min="0" max="5" value="{{ user_data.get('Social Activity Level', '') }}" required><br><br>
+    <label>Screen Time per Day (hrs):</label>
+    <input type="text" name="Screen Time per Day (hrs)" value="{{ user_data.get('Screen Time per Day (hrs)', '') }}" required>
 
-        <label>Physical Activity Level (0-5):</label>
-        <input type="number" name="Physical Activity Level" min="0" max="5" value="{{ user_data.get('Physical Activity Level', '') }}" required><br><br>
+    <label>Mood Swings Frequency (1-5):</label>
+    <input type="text" name="Mood Swings Frequency" value="{{ user_data.get('Mood Swings Frequency', '') }}" required>
 
-        <label>Screen Time per Day (hrs):</label>
-        <input type="number" name="Screen Time per Day (hrs)" min="0" max="24" step="0.1" value="{{ user_data.get('Screen Time per Day (hrs)', '') }}" required><br><br>
+    <label>Panic Attacks Experience:</label>
+    <select name="Panic Attacks Experience" required>
+      <option value="Yes" {% if user_data.get('Panic Attacks Experience') == 'Yes' %}selected{% endif %}>Yes</option>
+      <option value="No" {% if user_data.get('Panic Attacks Experience') == 'No' %}selected{% endif %}>No</option>
+    </select>
 
-        <label>Mood Swings Frequency (0-5):</label>
-        <input type="number" name="Mood Swings Frequency" min="0" max="5" value="{{ user_data.get('Mood Swings Frequency', '') }}" required><br><br>
+    <label>Concentration Level (1-5):</label>
+    <input type="text" name="Concentration Level" value="{{ user_data.get('Concentration Level', '') }}" required>
 
-        <label>Panic Attacks Experience:</label>
-        <select name="Panic Attacks Experience">
-            <option value="No" {% if user_data.get('Panic Attacks Experience') == 0 %}selected{% endif %}>No</option>
-            <option value="Yes" {% if user_data.get('Panic Attacks Experience') == 1 %}selected{% endif %}>Yes</option>
-        </select><br><br>
+    <label>Intrusive Thoughts:</label>
+    <select name="Intrusive Thoughts" required>
+      <option value="Yes" {% if user_data.get('Intrusive Thoughts') == 'Yes' %}selected{% endif %}>Yes</option>
+      <option value="No" {% if user_data.get('Intrusive Thoughts') == 'No' %}selected{% endif %}>No</option>
+    </select>
 
-        <label>Concentration Level (0-5):</label>
-        <input type="number" name="Concentration Level" min="0" max="5" value="{{ user_data.get('Concentration Level', '') }}" required><br><br>
+    <label>Traumatic Experience History:</label>
+    <select name="Traumatic Experience History" required>
+      <option value="Yes" {% if user_data.get('Traumatic Experience History') == 'Yes' %}selected{% endif %}>Yes</option>
+      <option value="No" {% if user_data.get('Traumatic Experience History') == 'No' %}selected{% endif %}>No</option>
+    </select>
 
-        <label>Intrusive Thoughts:</label>
-        <select name="Intrusive Thoughts">
-            <option value="No" {% if user_data.get('Intrusive Thoughts') == 0 %}selected{% endif %}>No</option>
-            <option value="Yes" {% if user_data.get('Intrusive Thoughts') == 1 %}selected{% endif %}>Yes</option>
-        </select><br><br>
+    <input type="submit" value="Submit Response">
+  </form>
+</div>
+{% endblock %}
 
-        <label>Traumatic Experience History:</label>
-        <select name="Traumatic Experience History">
-            <option value="No" {% if user_data.get('Traumatic Experience History') == 0 %}selected{% endif %}>No</option>
-            <option value="Yes" {% if user_data.get('Traumatic Experience History') == 1 %}selected{% endif %}>Yes</option>
-        </select><br><br>
 
-        <input type="submit" value="Submit Response">
-    </form>
-
-    <br>
-    <a href="{{ url_for('logout') }}">
-        <button>Logout</button>
-    </a>
-</body>
-</html>

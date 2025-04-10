@@ -5,27 +5,30 @@ import time
 from keras.models import load_model
 
 from database import register_user, verify_user
-from user_predictions.model import predict_user_disorder  
+from user_predictions.model import predict_user_disorder
 from chatbot import get_chatbot_response
+from huggingface_api import query_model
 
+# Directory for journal storage
 JOURNAL_DIR = "user_predictions/journals"
 os.makedirs(JOURNAL_DIR, exist_ok=True)
 
-app = Flask(__name__, template_folder="templates") 
-app.secret_key = "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"
+# Flask App Config
+app = Flask(__name__, template_folder="templates")
+app.secret_key = "your-super-secret-key"
 
+# Paths
 SAVE_FOLDER = "user_predictions"
 USER_RESPONSES_PATH = os.path.join(SAVE_FOLDER, "user_responses.csv")
 MODEL_PATH = load_model("mental_health_model.h5")
 
-# Caching responses to reduce file I/O
+# Cached data
 cached_responses = None
 last_load_time = 0
 
 def load_responses():
-    """Load user responses with caching."""
     global cached_responses, last_load_time
-    if cached_responses is None or time.time() - last_load_time > 30:  # Reload every 30 sec
+    if cached_responses is None or time.time() - last_load_time > 30:
         if os.path.exists(USER_RESPONSES_PATH):
             cached_responses = pd.read_csv(USER_RESPONSES_PATH)
         else:
@@ -39,47 +42,47 @@ def save_responses(df):
 def binary_convert(value):
     return 1 if value.lower() == "yes" else 0
 
-# Home route (redirects based on login status)
+# Home Page
 @app.route('/')
 def home():
     return render_template("home.html")
 
-# Login Page
+# Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    error = None
+    alert = session.pop("alert", None)
     if request.method == 'POST':
         email = request.form["email"]
         password = request.form["password"]
 
         if verify_user(email, password):
             session["email"] = email
-
             df = load_responses()
-            user_exists = not df[df["email"] == email].empty
-
-            if user_exists:
-                return redirect(url_for("chat"))  # Redirect to chatbot if responses exist
+            if not df[df["email"] == email].empty:
+                return redirect(url_for("chat"))
             else:
-                return redirect(url_for("form"))  # Else, go to form
-
+                return redirect(url_for("form"))
         else:
-            return render_template("login.html", error="Invalid credentials!")
-        
-    return render_template("login.html")
+            error = "Invalid credentials!"
 
-# Register Page
+    return render_template("login.html", error=error, alert=alert)
+
+# Register
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    error = None
     if request.method == 'POST':
         email = request.form["email"]
         password = request.form["password"]
 
         if register_user(email, password):
-            return redirect(url_for("login"))  # Redirect to login page after registration
+            session["alert"] = "Registered successfully! Please login."
+            return redirect(url_for("login"))
         else:
-            return render_template("register.html", error="Email already exists!")
+            error = "Email already exists!"
 
-    return render_template("register.html")
+    return render_template("register.html", error=error)
 
 # Logout
 @app.route('/logout')
@@ -91,12 +94,12 @@ def logout():
 @app.route('/form', methods=['GET', 'POST'])
 def form():
     if "email" not in session:
-        return redirect(url_for("login"))  # Redirect to login if not authenticated
+        return redirect(url_for("login"))
 
     email = session["email"]
     df = load_responses()
 
-    if request.method == "POST":  # When the user submits the form
+    if request.method == "POST":
         new_response = {
             "email": email,
             "Gender": request.form.get("Gender"),
@@ -122,25 +125,23 @@ def form():
         else:
             df = pd.concat([df, pd.DataFrame([new_response])], ignore_index=True)
 
-        save_responses(df)  # Save updated responses
-
+        save_responses(df)
         return redirect(url_for("predictions"))
 
-    # **GET request: Load previous user responses if available**
     user_data = df[df["email"] == email].to_dict(orient="records")
     user_data = user_data[0] if user_data else {}
 
     return render_template("form.html", email=email, user_data=user_data)
 
+# Submit Form (redundant if you're using /form POST)
 @app.route('/submit', methods=['POST'])
 def submit():
     if "email" not in session:
         return jsonify({"error": "Unauthorized"}), 403
 
-    email = session["email"]  
+    email = session["email"]
     df = load_responses()
 
-    # Collect form data
     new_response = {
         "email": email,
         "Gender": request.form.get("Gender"),
@@ -161,7 +162,6 @@ def submit():
         "Traumatic Experience History": request.form.get("Traumatic Experience History", "No"),
     }
 
-    # Save response
     if email in df["email"].values:
         df.loc[df["email"] == email, new_response.keys()] = new_response.values()
     else:
@@ -171,6 +171,7 @@ def submit():
     predict_user_disorder(email, df, MODEL_PATH)
     return redirect(url_for("predictions"))
 
+# Predictions Page
 @app.route('/predictions')
 def predictions():
     if "email" not in session:
@@ -183,31 +184,29 @@ def predictions():
     if user_data.empty:
         return render_template("prediction_result.html", error="User data not found!")
 
-    # Extract disorder predictions (Binary values 1 or 0)
     predicted_disorders = {col: user_data.iloc[0][col] for col in user_data.columns[-8:] if user_data.iloc[0][col] == 1}
 
-    # Disorder Descriptions (Modify descriptions as needed)
     disorder_descriptions = {
-        "Anxiety Disorders": "A mental health disorder characterized by feelings of worry, anxiety, or fear that are strong enough to interfere with daily activities.",
-        "Bipolar Disorder": "A disorder associated with episodes of mood swings ranging from depressive lows to manic highs.",
-        "Dissociative Disorders": "Conditions involving disruptions or breakdowns of memory, awareness, identity, or perception.",
-        "ADHD": "A chronic condition including attention difficulty, hyperactivity, and impulsiveness.",
-        "PTSD": "A disorder in which a person has difficulty recovering after experiencing or witnessing a terrifying event.",
-        "Schizophrenia": "A serious mental disorder affecting a person’s ability to think, feel, and behave clearly.",
-        "OCD": "A disorder where people have recurring, unwanted thoughts (obsessions) and behaviors (compulsions).",
-        "Depression": "A mood disorder causing a persistent feeling of sadness and loss of interest."
+        "Anxiety Disorders": "A mental health disorder characterized by worry or fear that interferes with daily life.",
+        "Bipolar Disorder": "Mood swings ranging from depressive lows to manic highs.",
+        "Dissociative Disorders": "Disruptions in memory, identity, or awareness.",
+        "ADHD": "Attention deficit, hyperactivity, and impulsiveness.",
+        "PTSD": "Trouble recovering from traumatic events.",
+        "Schizophrenia": "Distorted thinking and perception.",
+        "OCD": "Obsessions and compulsive behaviors.",
+        "Depression": "Persistent sadness and loss of interest."
     }
 
-    # Create a dictionary with disorder names and their descriptions
-    disorders_with_desc = {disorder: disorder_descriptions[disorder] for disorder in predicted_disorders.keys()}
+    disorders_with_desc = {d: disorder_descriptions[d] for d in predicted_disorders.keys()}
 
     return render_template("prediction_result.html", disorders=disorders_with_desc)
 
+# Journal Page
 @app.route('/journal', methods=['GET', 'POST'])
 def journal():
     if "email" not in session:
         return redirect(url_for("login"))
-    
+
     email = session["email"]
     journal_path = os.path.join(JOURNAL_DIR, f"{email}.txt")
 
@@ -217,7 +216,6 @@ def journal():
             f.write(f"\n--- Entry ({time.strftime('%Y-%m-%d %H:%M:%S')}) ---\n{entry}\n")
         return redirect(url_for("chat"))
 
-    # Read existing entries
     entries = ""
     if os.path.exists(journal_path):
         with open(journal_path, "r", encoding="utf-8") as f:
@@ -225,7 +223,7 @@ def journal():
 
     return render_template("journal.html", entries=entries)
 
-# Chatbot Page
+# Chat Page
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
     if "email" not in session:
@@ -235,10 +233,10 @@ def chat():
     user_data = df[df["email"] == session["email"]]
     disorders = [col for col in user_data.columns[-8:] if user_data.iloc[0][col] == 1] if not user_data.empty else []
 
-    return render_template("index.html", user_data={"disorders": disorders})
+    return render_template("chat.html", user_data={"disorders": disorders})
 
-from huggingface_api import query_model
 
+# Chat API
 @app.route('/chat_api', methods=['POST'])
 def chat_api():
     if "email" not in session:
@@ -246,11 +244,9 @@ def chat_api():
 
     email = session["email"]
     user_message = request.form.get("message")
-
     response = get_chatbot_response(email, user_message)
-
     return jsonify({"response": response})
 
+# Run Server
 if __name__ == '__main__':
     app.run(debug=True)
-

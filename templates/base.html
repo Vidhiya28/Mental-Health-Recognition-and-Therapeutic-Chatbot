@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Mental Health Chatbot{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+{% if session.email %}
+  <div class="hamburger" onclick="toggleSidebar()">☰</div>
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-header">🌱 Menu</div>
+    <a href="{{ url_for('form') }}">Assessment</a>
+    <a href="{{ url_for('journal') }}">Journal</a>
+    <a href="{{ url_for('chat') }}">Chat</a>
+  </div>
+  <div class="topbar">
+    <form action="{{ url_for('logout') }}" method="get">
+      <button class="logout-btn">Logout</button>
+    </form>
+    <label class="switch">
+      <input type="checkbox" id="modeToggle" />
+      <span class="slider"></span>
+    </label>
+  </div>
+{% endif %}
+
+<div class="main-content">
+  {% block content %}{% endblock %}
+</div>
+
+<script>
+  const toggle = document.getElementById("modeToggle");
+  if (toggle) {
+    toggle.addEventListener("change", () => {
+      document.body.classList.toggle("dark-mode");
+      localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+        toggle.checked = true;
+      }
+    });
+  }
+
+  function toggleSidebar() {
+    document.getElementById("sidebar").classList.toggle("active");
+  }
+</script>
+</body>
+</html>

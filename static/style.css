@@ -1,111 +1,285 @@
-/* style.css */
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@600&display=swap');
 
 :root {
-    --bg-color: #fdfdfd;
-    --primary-color: #F78C6B;
-    --text-color: #333;
-    --accent-dark: #223354;
-    --card-bg: #ffffff;
-    --input-bg: #f3f4f6;
+  --bg-color: #fdfdfd;
+  --primary-color: #0057D9;
+  --text-color: #333;
+  --accent-dark: #223354;
+  --card-bg: #ffffff;
+  --input-bg: #f3f4f6;
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    background-color: var(--bg-color);
-    font-family: 'Open Sans', sans-serif;
-    color: var(--text-color);
+  margin: 0;
+  padding: 0;
+  font-family: 'Open Sans', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background 0.3s, color 0.3s;
 }
 
-h1, h2, h3, h4 {
-    font-family: 'Poppins', sans-serif;
+.dark-mode {
+  --bg-color: #121212;
+  --text-color: #fff;
+  --card-bg: #1f1f1f;
+  --input-bg: #2a2a2a;
 }
 
-.container {
-    max-width: 800px; /* Consistent width */
-    height: auto; /* Allow height to adjust based on content */
-    margin: 40px auto;
-    padding: 30px;
-    background: var(--card-bg);
-    border-radius: 20px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+h1, h2, h3 {
+  font-family: 'Poppins', sans-serif;
 }
 
+a {
+  text-decoration: none;
+  color: var(--primary-color);
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* === Layout === */
+.main-content {
+  margin-left: 250px;
+  padding: 20px;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100%;
+  background: rgba(0, 87, 217, 0.1);
+  backdrop-filter: blur(6px);
+  padding-top: 60px;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.sidebar-header {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--accent-dark);
+}
+
+.sidebar a {
+  display: block;
+  padding: 12px 20px;
+  color: var(--accent-dark);
+  font-weight: 600;
+}
+.sidebar a:hover {
+  background-color: rgba(0, 87, 217, 0.1);
+}
+
+.hamburger {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 20;
+}
+
+/* Topbar */
+.topbar {
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  z-index: 20;
+  display: flex;
+  gap: 15px;
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0;
+  right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 22px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+input:checked + .slider {
+  background-color: #0057D9;
+}
+input:checked + .slider:before {
+  transform: translateX(18px);
+}
+
+/* Buttons */
+button, input[type="submit"] {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+button:hover, input[type="submit"]:hover {
+  background-color: #0041a8;
+}
+.logout-btn {
+  background-color: #d93a3a;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+.logout-btn:hover {
+  background-color: #b92f2f;
+}
+
+/* Form & Input Styling */
 input[type="text"],
 input[type="email"],
 input[type="password"],
 textarea,
 select {
-    width: 100%;
-    padding: 12px;
-    margin-top: 8px;
-    margin-bottom: 20px;
-    border: none;
-    background-color: var(--input-bg);
-    border-radius: 10px;
-    font-size: 16px;
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  margin-bottom: 20px;
+  border: none;
+  background-color: var(--input-bg);
+  border-radius: 10px;
+  font-size: 16px;
+  color: inherit;
 }
 
-input[type="submit"],
-button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.3s ease;
+.form-container,
+.journal-box {
+  background: var(--card-bg);
+  padding: 40px;
+  border-radius: 20px;
+  max-width: 700px;
+  margin: 80px auto;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
 }
 
-input[type="submit"]:hover,
-button:hover {
-    background-color: #e96f4d;
+textarea {
+  resize: vertical;
+  min-height: 100px;
 }
 
-a {
-    color: var(--accent-dark);
-    text-decoration: none;
-    font-weight: 600;
+/* Landing */
+.landing-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  text-align: center;
+}
+.landing-wrapper h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
 }
 
-a:hover {
-    text-decoration: underline;
+/* Chat page buttons */
+.chat-options {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  gap: 10px;
+}
+.chat-options .btn {
+  flex: 1 1 calc(30% - 10px);
+  min-width: 120px;
 }
 
-.error {
-    color: red;
-    margin-bottom: 10px;
-}
-
-.centered {
-    text-align: center;
-}
-
-.messages {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
+/* Messages */
 .chatbot-message, .user-message {
-    max-width: 70%;
-    padding: 10px 15px;
-    border-radius: 15px;
-    font-size: 14px;
-    line-height: 1.5;
+  max-width: 70%;
+  padding: 10px 15px;
+  border-radius: 15px;
+  font-size: 14px;
+  line-height: 1.5;
 }
-
 .chatbot-message {
-    background-color: #f1f1f1;
-    align-self: flex-start;
-    color: #333;
+  background-color: #f1f1f1;
+  align-self: flex-start;
+  color: #333;
+}
+.user-message {
+  background-color: var(--primary-color);
+  align-self: flex-end;
+  color: white;
 }
 
-.user-message {
-    background-color: var(--primary-color);
-    align-self: flex-end;
-    color: white;
+/* Login/Register Auth Box */
+.auth-box {
+  background-color: var(--card-bg);
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
 }
+.auth-box h2 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.form-group {
+  margin-bottom: 20px;
+}
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--input-bg);
+  font-size: 16px;
+  margin-top: 5px;
+}
+.form-center {
+  display: flex;
+  justify-content: center;
+}
+.alert {
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+.alert-danger {
+  background-color: #ffe5e5;
+  color: #b90000;
+}
+.alert-success {
+  background-color: #e1f8e8;
+  color: #257a3e;
+}
+
+  

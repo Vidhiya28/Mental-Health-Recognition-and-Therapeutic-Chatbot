@@ -3,10 +3,11 @@
 {% block content %}
 <div class="landing-wrapper">
   <h1>🌱 Welcome to the Mental Health Assistant</h1>
-  <p>Your personalized space to reflect, assess, and chat with support tools.</p>
-  <div style="margin-top: 20px;">
-    <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
-    <a href="{{ url_for('register') }}" class="btn btn-outline-primary">Register</a>
+  <p>Your personalized space to reflect, assess, and chat with supportive tools.</p>
+
+  <div class="auth-buttons">
+    <a href="{{ url_for('login') }}" class="auth-box-btn">Login</a>
+    <a href="{{ url_for('register') }}" class="auth-box-btn">Register</a>
   </div>
 </div>
 {% endblock %}

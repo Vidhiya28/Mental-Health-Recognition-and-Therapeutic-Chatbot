@@ -6,72 +6,89 @@
   <p><strong>Logged in as:</strong> {{ email }}</p>
 
   <form action="/submit" method="POST">
-    <label>Gender:</label>
-    <select name="Gender" required>
-      <option value="Male" {% if user_data.get('Gender') == 'Male' %}selected{% endif %}>Male</option>
-      <option value="Female" {% if user_data.get('Gender') == 'Female' %}selected{% endif %}>Female</option>
-    </select>
+    <div class="form-group"><label>Gender:</label>
+      <select name="Gender" class="form-control" required>
+        <option value="Male" {% if user_data.get('Gender') == 'Male' %}selected{% endif %}>Male</option>
+        <option value="Female" {% if user_data.get('Gender') == 'Female' %}selected{% endif %}>Female</option>
+      </select>
+    </div>
 
-    <label>Age:</label>
-    <input type="text" name="Age" value="{{ user_data.get('Age', '') }}" required>
+    <div class="form-group"><label>Age:</label>
+      <input type="text" name="Age" class="form-control" value="{{ user_data.get('Age', '') }}" required>
+    </div>
 
-    <label>Academic Pressure (1-5):</label>
-    <input type="text" name="Academic Pressure" value="{{ user_data.get('Academic Pressure', '') }}" required>
+    <div class="form-group"><label>Academic Pressure (1-5):</label>
+      <input type="text" name="Academic Pressure" class="form-control" value="{{ user_data.get('Academic Pressure', '') }}" required>
+    </div>
 
-    <label>Work Pressure (1-5):</label>
-    <input type="text" name="Work Pressure" value="{{ user_data.get('Work Pressure', '') }}" required>
+    <div class="form-group"><label>Work Pressure (1-5):</label>
+      <input type="text" name="Work Pressure" class="form-control" value="{{ user_data.get('Work Pressure', '') }}" required>
+    </div>
 
-    <label>Sleep Duration (in hours):</label>
-    <input type="text" name="Sleep Duration" value="{{ user_data.get('Sleep Duration', '') }}" required>
+    <div class="form-group"><label>Sleep Duration (hrs):</label>
+      <input type="text" name="Sleep Duration" class="form-control" value="{{ user_data.get('Sleep Duration', '') }}" required>
+    </div>
 
-    <label>Have you ever had suicidal thoughts?</label>
-    <select name="Have you ever had suicidal thoughts ?" required>
-      <option value="Yes" {% if user_data.get('Have you ever had suicidal thoughts ?') == 'Yes' %}selected{% endif %}>Yes</option>
-      <option value="No" {% if user_data.get('Have you ever had suicidal thoughts ?') == 'No' %}selected{% endif %}>No</option>
-    </select>
+    <div class="form-group"><label>Have you ever had suicidal thoughts?</label>
+      <select name="Have you ever had suicidal thoughts ?" class="form-control" required>
+        <option value="Yes" {% if user_data.get('Have you ever had suicidal thoughts ?') == 'Yes' %}selected{% endif %}>Yes</option>
+        <option value="No" {% if user_data.get('Have you ever had suicidal thoughts ?') == 'No' %}selected{% endif %}>No</option>
+      </select>
+    </div>
 
-    <label>Work/Study Hours per Day:</label>
-    <input type="text" name="Work/Study Hours" value="{{ user_data.get('Work/Study Hours', '') }}" required>
+    <div class="form-group"><label>Work/Study Hours per Day:</label>
+      <input type="text" name="Work/Study Hours" class="form-control" value="{{ user_data.get('Work/Study Hours', '') }}" required>
+    </div>
 
-    <label>Financial Stress (1-5):</label>
-    <input type="text" name="Financial Stress" value="{{ user_data.get('Financial Stress', '') }}" required>
+    <div class="form-group"><label>Financial Stress (1-5):</label>
+      <input type="text" name="Financial Stress" class="form-control" value="{{ user_data.get('Financial Stress', '') }}" required>
+    </div>
 
-    <label>Social Activity Level (1-5):</label>
-    <input type="text" name="Social Activity Level" value="{{ user_data.get('Social Activity Level', '') }}" required>
+    <div class="form-group"><label>Social Activity Level (1-5):</label>
+      <input type="text" name="Social Activity Level" class="form-control" value="{{ user_data.get('Social Activity Level', '') }}" required>
+    </div>
 
-    <label>Physical Activity Level (1-5):</label>
-    <input type="text" name="Physical Activity Level" value="{{ user_data.get('Physical Activity Level', '') }}" required>
+    <div class="form-group"><label>Physical Activity Level (1-5):</label>
+      <input type="text" name="Physical Activity Level" class="form-control" value="{{ user_data.get('Physical Activity Level', '') }}" required>
+    </div>
 
-    <label>Screen Time per Day (hrs):</label>
-    <input type="text" name="Screen Time per Day (hrs)" value="{{ user_data.get('Screen Time per Day (hrs)', '') }}" required>
+    <div class="form-group"><label>Screen Time per Day (hrs):</label>
+      <input type="text" name="Screen Time per Day (hrs)" class="form-control" value="{{ user_data.get('Screen Time per Day (hrs)', '') }}" required>
+    </div>
 
-    <label>Mood Swings Frequency (1-5):</label>
-    <input type="text" name="Mood Swings Frequency" value="{{ user_data.get('Mood Swings Frequency', '') }}" required>
+    <div class="form-group"><label>Mood Swings Frequency (1-5):</label>
+      <input type="text" name="Mood Swings Frequency" class="form-control" value="{{ user_data.get('Mood Swings Frequency', '') }}" required>
+    </div>
 
-    <label>Panic Attacks Experience:</label>
-    <select name="Panic Attacks Experience" required>
-      <option value="Yes" {% if user_data.get('Panic Attacks Experience') == 'Yes' %}selected{% endif %}>Yes</option>
-      <option value="No" {% if user_data.get('Panic Attacks Experience') == 'No' %}selected{% endif %}>No</option>
-    </select>
+    <div class="form-group"><label>Panic Attacks Experience:</label>
+      <select name="Panic Attacks Experience" class="form-control" required>
+        <option value="Yes" {% if user_data.get('Panic Attacks Experience') == 'Yes' %}selected{% endif %}>Yes</option>
+        <option value="No" {% if user_data.get('Panic Attacks Experience') == 'No' %}selected{% endif %}>No</option>
+      </select>
+    </div>
 
-    <label>Concentration Level (1-5):</label>
-    <input type="text" name="Concentration Level" value="{{ user_data.get('Concentration Level', '') }}" required>
+    <div class="form-group"><label>Concentration Level (1-5):</label>
+      <input type="text" name="Concentration Level" class="form-control" value="{{ user_data.get('Concentration Level', '') }}" required>
+    </div>
 
-    <label>Intrusive Thoughts:</label>
-    <select name="Intrusive Thoughts" required>
-      <option value="Yes" {% if user_data.get('Intrusive Thoughts') == 'Yes' %}selected{% endif %}>Yes</option>
-      <option value="No" {% if user_data.get('Intrusive Thoughts') == 'No' %}selected{% endif %}>No</option>
-    </select>
+    <div class="form-group"><label>Intrusive Thoughts:</label>
+      <select name="Intrusive Thoughts" class="form-control" required>
+        <option value="Yes" {% if user_data.get('Intrusive Thoughts') == 'Yes' %}selected{% endif %}>Yes</option>
+        <option value="No" {% if user_data.get('Intrusive Thoughts') == 'No' %}selected{% endif %}>No</option>
+      </select>
+    </div>
 
-    <label>Traumatic Experience History:</label>
-    <select name="Traumatic Experience History" required>
-      <option value="Yes" {% if user_data.get('Traumatic Experience History') == 'Yes' %}selected{% endif %}>Yes</option>
-      <option value="No" {% if user_data.get('Traumatic Experience History') == 'No' %}selected{% endif %}>No</option>
-    </select>
+    <div class="form-group"><label>Traumatic Experience History:</label>
+      <select name="Traumatic Experience History" class="form-control" required>
+        <option value="Yes" {% if user_data.get('Traumatic Experience History') == 'Yes' %}selected{% endif %}>Yes</option>
+        <option value="No" {% if user_data.get('Traumatic Experience History') == 'No' %}selected{% endif %}>No</option>
+      </select>
+    </div>
 
-    <input type="submit" value="Submit Response">
+    <div class="form-center mt-4">
+      <input type="submit" class="btn btn-primary" value="Submit Response">
+    </div>
   </form>
 </div>
 {% endblock %}
-
 

@@ -19,7 +19,6 @@ Your goal: Help users feel heard, supported, and empowered. Always be here for t
 """
 
 CONVO_DIR = "user_predictions/conversations"
-
 os.makedirs(CONVO_DIR, exist_ok=True)
 
 def load_conversation(email):
@@ -39,11 +38,14 @@ def get_chatbot_response(email, user_message, user_disorders=[]):
 
     conversation.append({"role": "user", "content": user_message})
 
-    prompt = f"[INST] {SYSTEM_PROMPT.strip()}\n\n"
-    for msg in conversation[-5:]: 
+    # Build plain natural prompt (no [INST] format)
+    prompt = f"{SYSTEM_PROMPT.strip()}\n\n"
+    for msg in conversation[-5:]:
         role = "User" if msg["role"] == "user" else "Assistant"
         prompt += f"{role}: {msg['content']}\n"
-    prompt += "Assistant: [/INST]"
+    prompt += "Assistant:"
+
+    print("Sending prompt:", prompt)  # optional for debug
 
     response = query_model(prompt)
 
@@ -51,4 +53,3 @@ def get_chatbot_response(email, user_message, user_disorders=[]):
     save_conversation(email, conversation)
 
     return response
-

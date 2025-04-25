@@ -16,7 +16,7 @@ Using machine learning, it predicts **8 different mental disorders and scores**,
 ## 💡 Key Features
 
 - 🧠 **Mental Health Disorder Prediction** using an MLP neural network (BDI, GAD-7, PTSD, OCD, etc.)
-- 🤖 **AI Chatbot** powered by Hugging Face’s Mistral or Blenderbot with conversation memory
+- 🤖 **AI Chatbot** powered with conversation memory
 - 📓 **Personal Journal Page** to allow users to express thoughts and emotions
 - 🌈 **Mood-based Responses** tailored using previous inputs and predictions
 - 🧾 **User Authentication & Secure Session Handling**
@@ -30,9 +30,10 @@ Using machine learning, it predicts **8 different mental disorders and scores**,
 | Challenge                         | How It Was Tackled                                                                 |
 |----------------------------------|------------------------------------------------------------------------------------|
 | Balancing Empathy in Chatbot     | Used detailed prompt engineering, memory-based conversation design                |
-| Resource-Heavy Models            | Switched to lightweight or API-based models like DialoGPT / Mistral Inference API |
-| Data Quality & NaNs              | Applied data preprocessing, MinMax scaling, and custom feature cleaning           |
-| Multi-label Output Prediction    | Designed a custom neural network for both regression (scores) and classification (disorders) |
+| Class Imbalance                          | Used stratified sampling and class-weighted loss functions to address skewed disorder distributions     |
+| Feature Engineering for Mixed Data       | Engineered features from categorical and continuous survey inputs; standardized scales with MinMaxScaler |
+| Balancing Empathy in Chatbot     | Used detailed prompt engineering, memory-based conversation design                |
+| Multi-label Classification Complexity    | Designed custom loss and evaluation pipeline to handle multiple overlapping disorder labels             |
 | UI/UX Integration                | Built simple and clean HTML interfaces; used Flask for routing and user session control |
 
 ---
@@ -67,9 +68,6 @@ source venv/bin/activate    # For Windows: venv\Scripts\activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Get your Hugging Face API Key
-echo "HF_API_KEY=your_api_key_here" > .env
-
 # Start the Flask app
 python app.py
 
@@ -80,7 +78,7 @@ python app.py
 ## 👥 Contributors
 
 - @Tej-00 - Project Lead Developer, Model Development, Data Preprocessing, Model Trainer.
-- @vidhiya28 – UI/UX developer, Performance Testing and documentation.
+- @vidhiya28 – UI/UX developer, Integrated ML outputs, Performance Testing and documentation.
 
 ---
 
